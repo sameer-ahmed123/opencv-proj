@@ -1,26 +1,34 @@
-# Import OpenCV
 import cv2
 
-# Load an image from file
-image = cv2.imread('open.jpg')  # Replace with your image path
+# Open default laptop camera (0 is default webcam index)
+cap = cv2.VideoCapture(0)
 
-# Check if image loaded successfully
-if image is None:
-    print("Error: Could not open or find the image.")
+# Check if camera opened successfully
+if not cap.isOpened():
+    print("Error: Cannot open webcam")
     exit()
 
-# Display the original image
-cv2.imshow('Original Image', image)
+# Set optional properties (optional, can be skipped)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)   # Width
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  # Height
 
-# Convert the image to grayscale
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# Loop to continuously get frames
+while True:
+    # Capture frame-by-frame
+    ret, frame = cap.read()
 
-# Display the grayscale image
-cv2.imshow('Grayscale Image', gray_image)
+    # If frame read failed, break loop
+    if not ret:
+        print("Error: Failed to capture frame")
+        break
 
-# Save the grayscale image to file
-cv2.imwrite('gray_image_output.jpg', gray_image)
+    # Display the resulting frame
+    cv2.imshow('Laptop Camera Feed', frame)
 
-# Wait for a key press and close all windows
-cv2.waitKey(0)
+    # Press 'q' to exit the camera feed
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the camera and close windows
+cap.release()
 cv2.destroyAllWindows()
