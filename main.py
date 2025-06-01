@@ -1,3 +1,4 @@
+
 # import cv2
 
 # # Open the default camera (0). Use 1 or 2 for external cameras if needed.
@@ -92,32 +93,42 @@
 
 
 
+
 import cv2
 from ultralytics import YOLO
 
 model = YOLO('yolov8l.pt')
 
+
+# Open default laptop camera (0 is default webcam index)
 cap = cv2.VideoCapture(0)
 
+# Check if camera opened successfully
 if not cap.isOpened():
-    print("could not open cam")
+    print("Error: Cannot open webcam")
     exit()
 
+# Set optional properties (optional, can be skipped)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)   # Width
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  # Height
+
+# Loop to continuously get frames
 while True:
+    # Capture frame-by-frame
     ret, frame = cap.read()
+
+    # If frame read failed, break loop
     if not ret:
-        print("failed to grab frames")
+        print("Error: Failed to capture frame")
         break
 
-    results = model(frame)
+    # Display the resulting frame
+    cv2.imshow('Laptop Camera Feed', frame)
 
-    anotated_frames = results[0].plot()
-
-    cv2.imshow("yolov8L object detaction ", anotated_frames)
-
-    if cv2.waitKey(1) == ord("q"):
+    # Press 'q' to exit the camera feed
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-
+# Release the camera and close windows
 cap.release()
 cv2.destroyAllWindows()
